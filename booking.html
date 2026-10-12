@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a Room – Sunrise Hotel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <img src="Sunrise.png" alt="Sunrise Hotel Logo" class="nav-logo" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="booking.html" class="active">Book a Room</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Room Booking</h1>
+    <p>Fill in your details below to reserve your room at Sunrise Hotel.</p>
+  </div>
+
+  <div class="booking-container">
+
+    <!-- BOOKING FORM -->
+    <div class="form-section">
+      <form id="bookingForm" action="process_booking.php" method="POST" novalidate>
+
+        <!-- PERSONAL DETAILS -->
+        <fieldset>
+          <legend>Personal Details</legend>
+
+          <div class="form-group">
+            <label for="fullName">Full Name <span class="required">*</span></label>
+            <input type="text" id="fullName" name="fullName" placeholder="e.g. John Kamau" />
+            <span class="error-msg" id="fullNameError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="idNumber">National ID / Passport Number <span class="required">*</span></label>
+            <input type="text" id="idNumber" name="idNumber" placeholder="e.g. 34567890" />
+            <span class="error-msg" id="idNumberError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" placeholder="e.g. john@email.com" />
+            <span class="error-msg" id="emailError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="e.g. 0712345678" maxlength="10" />
+            <span class="error-msg" id="phoneError"></span>
+          </div>
+        </fieldset>
+
+        <!-- BOOKING DETAILS -->
+        <fieldset>
+          <legend>Booking Details</legend>
+
+          <div class="form-group">
+            <label for="checkinDate">Check-in Date <span class="required">*</span></label>
+            <input type="date" id="checkinDate" name="checkinDate" />
+            <span class="error-msg" id="checkinDateError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="numNights">Number of Nights <span class="required">*</span></label>
+            <input type="number" id="numNights" name="numNights" min="1" max="14" placeholder="1 – 14" />
+            <span class="error-msg" id="numNightsError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="roomType">Room Type <span class="required">*</span></label>
+            <select id="roomType" name="roomType">
+              <option value="">-- Select a Room --</option>
+              <option value="single">Single Room – KSh 3,500/night (Max 1 guest)</option>
+              <option value="double">Double Room – KSh 5,000/night (Max 2 guests)</option>
+              <option value="family">Family Room – KSh 7,500/night (Max 4 guests)</option>
+            </select>
+            <span class="error-msg" id="roomTypeError"></span>
+            <!-- Dynamic: shows capacity info -->
+            <div id="roomCapacityInfo" class="info-box" style="display:none;"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="numGuests">Number of Guests <span class="required">*</span></label>
+            <input type="number" id="numGuests" name="numGuests" min="1" placeholder="Enter number of guests" />
+            <span class="error-msg" id="numGuestsError"></span>
+            <!-- Dynamic: capacity warning -->
+            <div id="capacityWarning" class="warning-box" style="display:none;">
+              Number of guests exceeds room capacity!
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- ADDITIONAL SERVICES -->
+        <fieldset>
+          <legend>Additional Services</legend>
+
+          <!-- Breakfast -->
+          <div class="form-group">
+            <label>Breakfast</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="breakfast" id="breakfastYes" value="yes" />
+                Yes – KSh 700 per person per day
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="breakfast" id="breakfastNo" value="no" checked />
+                No
+              </label>
+            </div>
+          </div>
+
+          <!-- Airport Transfer -->
+          <div class="form-group">
+            <label>Airport Transfer</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="airportTransfer" id="transferYes" value="yes" />
+                Yes – KSh 2,000
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="airportTransfer" id="transferNo" value="no" checked />
+                No
+              </label>
+            </div>
+            <!-- Dynamic: transfer details shown only when Yes is selected -->
+            <div id="transferDetails" class="info-box" style="display:none;">
+              Our driver will pick you up from the airport. Please provide your flight details on arrival.
+            </div>
+          </div>
+
+          <!-- Extra Bed (Individualization: last digit = 7) -->
+          <div class="form-group">
+            <label>Extra Bed</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="extraBed" name="extraBed" value="yes" />
+                Add an extra bed – KSh 1,500 per night
+              </label>
+            </div>
+          </div>
+
+        </fieldset>
+
+        <!-- Hidden field for JS-calculated amount (PHP will independently verify) -->
+        <input type="hidden" id="jsCalculatedAmount" name="jsCalculatedAmount" value="0" />
+
+        <button type="submit" class="btn-submit">Confirm Booking</button>
+      </form>
+    </div>
+
+    <!-- LIVE BILL SUMMARY -->
+    <div class="summary-section">
+      <div class="summary-card" id="summaryCard">
+        <h2>Booking Summary</h2>
+        <div id="summaryContent">
+          <p class="summary-placeholder">Select your options to see a live summary.</p>
+        </div>
+        <div class="bill-breakdown" id="billBreakdown" style="display:none;">
+          <h3>Bill Breakdown</h3>
+          <table class="bill-table">
+            <tbody id="billRows"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td><strong>TOTAL</strong></td>
+                <td id="billTotal"><strong>KSh 0</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end booking-container -->
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2026 Sunrise Hotel. All rights reserved.</p>
+    <p>
+      <span class="footer-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="16" height="16" viewBox="0 0 256 256" xml:space="preserve">
+          <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+            <path d="M 45 90 c -1.415 0 -2.725 -0.748 -3.444 -1.966 l -4.385 -7.417 C 28.167 65.396 19.664 51.02 16.759 45.189 c -2.112 -4.331 -3.175 -8.955 -3.175 -13.773 C 13.584 14.093 27.677 0 45 0 c 17.323 0 31.416 14.093 31.416 31.416 c 0 4.815 -1.063 9.438 -3.157 13.741 c -0.025 0.052 -0.053 0.104 -0.08 0.155 c -2.961 5.909 -11.41 20.193 -20.353 35.309 l -4.382 7.413 C 47.725 89.252 46.415 90 45 90 z" style="fill: #c8962a;" />
+            <path d="M 45 45.678 c -8.474 0 -15.369 -6.894 -15.369 -15.368 S 36.526 14.941 45 14.941 c 8.474 0 15.368 6.895 15.368 15.369 S 53.474 45.678 45 45.678 z" style="fill: #ffffff;" />
+          </g>
+        </svg>
+      </span>
+      Nairobi, Kenya &nbsp;|&nbsp; 
+      <span class="footer-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="16" height="16" viewBox="0 0 256 256" xml:space="preserve">
+          <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+            <circle cx="45" cy="45" r="45" style="fill: #c8962a;"/>
+            <path d="M 61.305 73.895 l 5.959 -3.006 c 2.834 -1.43 3.174 -5.342 0.629 -7.239 l -8.995 -6.706 c -1.357 -1.011 -3.182 -1.127 -4.655 -0.294 l -2.613 1.477 c -1.253 0.708 -2.788 0.755 -4.059 0.079 c -6.864 -3.654 -12.123 -8.913 -15.777 -15.777 c -0.676 -1.271 -0.63 -2.806 0.079 -4.059 l 1.477 -2.613 c 0.833 -1.473 0.717 -3.298 -0.294 -4.655 l -6.706 -8.995 c -1.897 -2.545 -5.809 -2.205 -7.239 0.629 l -3.006 5.959 c -1.405 2.785 -1.482 6.068 -0.164 8.894 c 7.733 16.58 19.889 28.736 36.469 36.469 C 55.237 75.377 58.52 75.3 61.305 73.895 z" style="fill: rgb(255,255,255);"/>
+            <path d="M 72.275 50.419 c -1.505 0 -2.725 -1.22 -2.725 -2.725 c 0 -15.023 -12.222 -27.245 -27.245 -27.245 c -1.505 0 -2.725 -1.22 -2.725 -2.725 c 0 -1.505 1.22 -2.725 2.725 -2.725 C 60.333 15 75 29.667 75 47.694 C 75 49.199 73.78 50.419 72.275 50.419 z" style="fill: rgb(255,255,255);"/>
+            <path d="M 61.377 50.419 c -1.505 0 -2.725 -1.22 -2.725 -2.725 c 0 -9.014 -7.333 -16.347 -16.347 -16.347 c -1.505 0 -2.725 -1.22 -2.725 -2.725 c 0 -1.505 1.22 -2.725 2.725 -2.725 c 12.019 0 21.796 9.778 21.796 21.796 C 64.102 49.199 62.882 50.419 61.377 50.419 z" style="fill: rgb(255,255,255);"/>
+          </g>
+        </svg>
+      </span>
+      +254 700 000 000 &nbsp;|&nbsp;
+      <span class="footer-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="16" height="16" viewBox="0 0 256 256" xml:space="preserve">
+          <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+            <circle cx="45" cy="45" r="45" style="fill: #c8962a;"/>
+            <path d="M 54.717 63.299 c -0.264 -0.074 -0.566 -0.011 -0.769 0.164 c -5.643 5.009 -7.288 5.625 -7.734 5.657 c -0.056 0.004 -0.18 -0.048 -0.344 -0.211 c -0.206 -0.201 -0.317 -0.465 -0.342 -0.807 c -0.172 -2.383 1.447 -9.741 4.812 -21.87 c 2.826 -10.143 3.089 -12.2 3.041 -12.863 c -0.071 -0.99 -0.563 -1.759 -1.46 -2.287 c -0.854 -0.501 -2.025 -0.701 -3.477 -0.596 c -2.448 0.177 -5.362 1.206 -8.661 3.06 c -0.943 0.531 -1.926 1.166 -2.92 1.886 c -2.622 1.9 -4.06 4.79 -3.848 7.729 c 0.017 0.241 0.206 0.446 0.478 0.522 c 0.273 0.075 0.578 0.005 0.773 -0.177 c 2.602 -2.419 4.335 -3.902 5.153 -4.409 c 0.873 -0.54 1.651 -0.837 2.315 -0.885 c 0.245 -0.018 0.368 -0.027 0.397 0.38 c 0.039 0.541 -0.047 1.188 -0.255 1.919 c -4.927 16.991 -7.17 27.343 -6.86 31.647 c 0.106 1.463 0.672 2.6 1.684 3.382 c 1.024 0.793 2.363 1.137 3.976 1.02 c 1.757 -0.127 3.866 -0.902 6.446 -2.369 c 1.241 -0.706 2.849 -1.847 4.78 -3.391 c 2.277 -1.822 3.475 -4.366 3.287 -6.98 C 55.171 63.581 54.987 63.377 54.717 63.299 z" style="fill: rgb(255,255,255);"/>
+            <circle cx="50.830999999999996" cy="19.591" r="6.171" style="fill: rgb(255,255,255);"/>
+          </g>
+        </svg>
+      </span>
+      info@sunrisehotel.co.ke
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
